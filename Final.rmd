@@ -1,14 +1,13 @@
 ---
 title: "Covid91 vaccine study Final2022"
-author: "Put your name here!"
+author: "Taelynn Condoll"
 output: 
   html_document:
     number_sections: true
     toc: true
     toc_depth: 5
-date: "`r Sys.Date()`" 
+date: "2022" 
 ---
-
 ```{r include=FALSE,echo=FALSE}
 require(tidyverse)
 require(tigerstats)
@@ -18,21 +17,227 @@ FinalDat <-read.csv(file="final_Data.csv",header=TRUE)
 FinalData <- FinalDat  %>% select(-one_of("X"))
 FinalData <- FinalData %>%
 mutate(across(where(is.character), as.factor))
+Male = filter(FinalData, sex =='M')
+Female = filter(FinalData, sex =='F')
+LGBTQ = filter(FinalData, LGBTQ =='gay')
+Druggie = filter(FinalData, DrugUser =='yes')
 ```
 
 # Introduction
 
 A new  preventative vaccine (covid91) is under test in clinical trials. Given the nature of this vaccine it is suspected that the drug may exhibit different effectiveness across the variety of subpopulations tracked. Consider population subgroups by gender( guys and gals), drug use, and sexual orientation. Write a complete report that separately considers this drug for each subgroup and your recommendations as to whether people in the subgroup should take the vaccine. Structure your report in four sections each devoted to one of the four subgroups, use null and alternative hypothesis statements and correct statistical verbage when referencing p-values in conclusions.
 
+### Hypotheses
+
+$H_0$ = The effectiveness of the vaccine does not change between the 4 groups of people.
+
+$H_A$ = The effectiveness of the vaccine does change between the 4 groups of people.
+
+### Methods
+
+In order to determine the relation between the different subgroups and the Covid-19 vaccine, I will assess each subgroup individually. This is a Cat~CAT situation since both variables (Subgroup and the Effectiveness of the vaccine.) For each individual subgroup, I will analyze the Graphical descriptive results via a bar chart, the numerical descriptive results with a table, the inferential results with a chi-squared test, and the inferential descriptive results through a Fischer exact test. With this data, I will determine the effectiveness of the vaccine and state my recommendation for each subgroup's use of the vaccine.
+
 ## Males
 
+### Graphical Descriptive Results
+
+```{r}
+barchartGC(~infected + treatment,data=Male)
+barchartGC(~infected + treatment,data=Male, type="percent")
+```
+
+The first chart compares the influence of the test substance and the vaccination in avoiding covid in the men subpopulation. The percentages from the first graph are described in the second diagram concerning men. The graph demonstrates that the men's vaccination rates only somewhat enhanced. Compared to the placebo group, the men the one taken the cure had an insensitivity to the virus of about 35%. In the "OK" district, employees of business or other enterprise are evenly split in the two graphs. The number of instances of COVID in men seems to be descending thanks to the vaccine.
+
+### Numerical Descriptive Results
+
+```{r}
+table1 <- xtabs(~infected + treatment, data=Male)
+rowPerc(table1)
+colPerc(table1)
+```
+
+The percentages of people who had COVID 19 are shown in this table. When given a placebo, almost 68 percent of males actually developed COVID, compared to about 32 percent of those who received the vaccine. Anyone who received the vaccine had a 36% lower risk of contracting the virus.
+
+### Inferrential Results
+
+```{r}
+chisq.test(table1)
+chisqtestGC(table1)
+fisher.test(table1)
+```
+
+ The Fisher exact test provided an odds Ratio of 2.092 and has a 95% confidence interval from 1.667079 to 2.638055. Since the odds ratio is above 1, that means the vaccine is effective in preventing cases of covid. This number means that the vaccine is approximately 2.1 times as effective as the placebo for the male subjects for preventing covid. The chi-squared test has a p-value is 2.645e-11, which is less than .05.We can reject the null hypothesis of "The effectiveness of the vaccine does not change between the 4 groups of people."
+
+### Efficacy
+
+```{r}
+efficMale = 2.092161/(2.092161 + 1) * 100
+efficMale = round(efficMale)
+confIntLower = 1.667079/(1.667079+ 1) * 100
+confIntLower = round(confIntLower)
+confIntUpper = 2.638055/(2.638055 + 1) * 100
+confIntUpper = round(confIntUpper)
+```
+
+The efficacy for males was `r efficMale`%.  
+The 95% Confidence Interval for efficacy was from (`r confIntLower`, `r confIntUpper`)%.
+
+### Male Conclusion
+
+ As seen in the Fisher exact test, with a p-value of less than .05, we rejected the null hypothesis of"The effectiveness of the vaccine does not change between the 4 groups of people." The bar chart and the data both show that Men who received the  vaccine were around 35% less likely to catch covid. The conclusion can be drawn that it is safe and efective for men to get the covid vaccine.
 
 ## Females
 
+### Graphical Descriptive Results
+
+```{r}
+barchartGC(~infected + treatment,data=Female)
+barchartGC(~infected + treatment,data=Female, type="percent")
+```
+
+Because females who receive the placebo are roughly 18% more likely to contract COVID than those who receive the vaccination, the Covid shot appears to be effective for protecting against COVID in females. The graph on the right displays the percentages of the left graph while the graph on the left displays the total number of people who were tested. Under the section "OK," both graphs exhibit an equal distribution of male and female respondents. For women, the Covid shot appears to be effective.
+
+### Numerical Descriptive Results
+
+```{r}
+table2 <- xtabs(~infected + treatment, data=Female)
+rowPerc(table2)
+colPerc(table2)
+```
+
+The first chart compares the capability of the test substance and the vaccination in avoiding covid in the men subpopulation. The percentages from the first graph are described in the second diagram concerning men. The graph demonstrates that the men's vaccination rates only somewhat enhanced. Compared to the placebo group, the men the one taken the cure had an insensitivity to the virus of about 35%. In the "OK" district, employees of business or other enterprise are evenly split in the two graphs. The number of instances of COVID in men seems to be descending thanks to the vaccine.
+
+### Inferrential Results
+
+```{r}
+chisq.test(table2)
+chisqtestGC(table2)
+ftestF = fisher.test(table2)
+ftestF
+effecF = ftestF$estimate/(ftestF$estimate + 1) * 100
+```
+
+The Fisher exact test present an advantage Ratio of 1.428903 and a 95% Confidence pause from 1.150398 to 1.778592. The probability ration is above 1, so the cure is productive in averting covid in women. This way that the Covid cure is about 1.4 opportunities more persuasive for women therefore the fake pill group, that is still direct, but inferior the Males. The p profit is 0.0009484 < .05; therefor, we can renounce the valueless theory. Therefore we can decide it is  persuasive.
+
+### Efficacy
+
+```{r}
+efficFemale = 1.428903/(1.428903 + 1) * 100
+efficFemale = round(efficFemale)
+confIntLower = 1.150398/(1.150398+ 1) * 100
+confIntLower = round(confIntLower)
+confIntUpper = 1.778592/(1.778592 + 1) * 100
+confIntUpper = round(confIntUpper)
+```
+
+The 95% Confidence Interval for efficacy is (`r confIntLower`, `r confIntUpper`)%.
+The efficacy for Females is `r effecF`%. 
+
+
+### Female Conclusion
+
+The distinctness in covid instances among the placebo group and the cure group in the male research was about 36%, inasmuch as it was particularly 50% in the female study. Women the one endure the cure are more protected from Covid than daughters the one endure a fake pill. Despite the cure's lower influence in women, accepting it is still a urged plan. Long-term security and efficiency are undamaged, accordingly it bear be secondhand.
 
 ## LGBTQ
 
+### Graphical Descriptive Results
+
+```{r}
+barchartGC(~infected + treatment,data=LGBTQ)
+barchartGC(~infected + treatment,data=LGBTQ, type="percent")
+```
+
+The graphs manifest that cure recipients knowledgeable significantly more occurrence of COVID than fake pill recipients. Additionally, the division "OK" is immediately 56/44 alternatively 50/50 as it formerly was. LGBTQ things had a about 70% raised risk of cultivating covid compared to those taking a fake pill. 
+
+### Numerical Descriptive Results
+
+```{r}
+table3 <- xtabs(~infected + treatment, data=LGBTQ)
+rowPerc(table3)
+colPerc(table3)
+```
+
+With the number of covid instances for the fake pill group being simply 13.33 portion, and the cure group at 86.67, these results are considerably various from those of the above two groups, Men and Women. This cure is less urged than the first two groups because those the one endure it are 73.34 allotment more inclined cultivate Covid than those the one sustain a fake pill.
+
+### Inferrential Results
+
+```{r}
+chisq.test(table3)
+chisqtestGC(table3)
+fisher.test(table3)
+```
+
+The Fisher exact test present an advantage Ratio of 0.1465164 and a 95% Confidence pause from  0.05991122 to 0.31196422. Since the advantage ration is beneath 1, meaning the cure is not persuasive in blocking the covid bacterium. This resources that the Covid cure act average .15 occasions as productive as the placebo for appendages in the LGBTQ comunity, that is hostile profit up until now. The p-profit is 1.642e-09, that is inferior .05, intention we must, like the last 2 opportunities, reject the valueless theory.
+
+### Efficacy
+
+```{r}
+efficLGBTQ = 0.1465164/(0.1465164 + 1) * 100
+efficLGBTQ = round(efficLGBTQ)
+confIntLower = 0.05991122/(0.05991122+ 1) * 100
+confIntLower = round(confIntLower)
+confIntUpper = 0.31196422/(0.31196422 + 1) * 100
+confIntUpper = round(confIntUpper)
+```
+
+The efficacy for lgbtq was `r efficLGBTQ`%.  
+The 95% Confidence Interval for efficacy was (`r confIntLower`, `r confIntUpper`)%.
+
+### LGBTQ Conclusion
+
+The LGBTQ study was significantly various from the former two groups. The exact opposite was valid for the LGBTQ colleagues, the one experienced considerably hardly any sicknesses in the fake pill group than in the immunization group. One ability take the end that public the one are contained the LGBTQ society shouldn't receive the vaccine because 73 allotment of those the one were ill had had vaccinations.
 
 
 ## Druggies
 
+### Graphical Descriptive Results
+
+```{r}
+barchartGC(~infected + treatment,data=Druggie)
+barchartGC(~infected + treatment,data=Druggie, type="percent")
+```
+
+The fake pill and cure belongings on in any case the drug consumers were ill are described in the abandoned chart. The percentages from the first diagram concerning the portion are presented in the right chart. Similar to the LGBTQ society, those the one taken the immunization were about 70% more inclined contract the Covid bug than those the one taken a fake pill. Except for LGBTQ, the extent "OK" has waited about 50/50.
+
+### Numerical Descriptive Results
+
+```{r}
+table4 <- xtabs(~infected + treatment, data=Druggie)
+rowPerc(table4)
+colPerc(table4)
+```
+
+This table supplies percentages in numbers for inmates the one received Covid 19. The fake pill group shows just about 15% of the noticed person addicted to narcotics covid instances, while the vaccination group gives reason for 85% of bureaucracy. This disconnection parallels the LGBTQ subgroup extremely approximately.
+
+### Inferrential Results
+
+```{r}
+chisq.test(table4)
+chisqtestGC(table4)
+fisher.test(table4)
+```
+ 
+The Fisher exact test present an probability Ratio of 0.1775019 and a 95% Confidence break from 0.07654399 to 0.36573284. Since the probability percentage is inferior individual, the cure is .17 occasions as likley to stop covid as the fake pill for Druggies, that is More than the LGBTQ but inferior Females. The p-worth for the Druggie subgroup is 2.886e-08, that is inferior .05, so we must dismiss the ineffectual theory.
+
+### Efficacy
+
+```{r}
+efficDruggie = 0.1775019/(0.1775019 + 1) * 100
+efficDruggie = round(efficDruggie)
+confIntLower = 0.07654399/(0.07654399+ 1) * 100
+confIntLower = round(confIntLower)
+confIntUpper = 0.36573284/(0.36573284 + 1) * 100
+confIntUpper = round(confIntUpper)
+```
+
+The efficacy for Druggies was `r efficDruggie`%.  
+The 95% Confidence Interval for efficacy was (`r confIntLower`, `r confIntUpper`)%.
+
+### Druggies Conclusion
+
+The Druggie study establish that 85% of all recorded covid instances introduced from the cure group, while the surplus 15% introduced from the fake pill group, analogous to the LGBTQ Subgroup.
+
+
+## Final Discussion and Conclusion
+
+The original question was "Does the vaccine exhibit different effectiveness across the sub populations of Males, Females, LGBTQ members, and habitual intravenous drug users?" The data determines that Males have the topmost success rate for the vaccine, alongside women appearing a close second.The vaccine had a very damaging effect on drug consumers, and LGBTQ group occured in conditions of vaccine efficiency. The sample capacity for the male and female groups was approximately six periods in addition to the druggie and LGBTQ groups. There were 18370 participants in the Female and Male divisions, while 3060 people in the Druggie and LGBTQ groups. The statistics should have an impartial dispersion because these are both extreme states. The influence of the vaccine was intensely diverse between the populace, and the p-value for all subgroups were less than 0.05. Therefore, we must reject the null hypothesis of stating that "The effectiveness of the vaccine does not change between the 4 groups of people."
